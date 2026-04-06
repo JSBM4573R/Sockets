@@ -1,3 +1,13 @@
+#Comandos Linux
+sudo apt update
+sudo apt install mysql-server
+sudo mysql -u root -p
+
+#Comandos previos en MYSQL
+CREATE USER 'jsbm'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'jsbm'@'localhost';
+
+#Creación de esquema de base de datos y tablas con sus relaciones
 CREATE DATABASE sistema_personas;
 USE sistema_personas;
 
