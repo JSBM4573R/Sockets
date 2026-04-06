@@ -4,15 +4,23 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Clase de la maquina Socket Cliente
+ */
 public class Client {
 
+    private static final String HOST = "127.0.0.1";
+    private static final int PORT = 5000;
+
+    /**
+     * Metodo principal de la clase Client
+     * @param args
+     */
     public static void main(String[] args) {
 
-        String host = "127.0.0.1";
-        int port = 5000;
-
+        // Control de errores y generación del Socket
         try (
-            Socket socket = new Socket(host, port);
+            Socket socket = new Socket(HOST, PORT);
             BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
             PrintWriter salida = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()))
@@ -22,7 +30,7 @@ public class Client {
 
             while (true) {
 
-                System.out.print("Ingrese número telefónico: ");
+                System.out.print("Ingrese número telefónico de la persona que desea consultar: ");
                 String telefono = teclado.readLine();
 
                 salida.println(telefono);
@@ -31,9 +39,9 @@ public class Client {
                 System.out.println("Respuesta del Servidor: " + respuesta);
 
                 System.out.print("¿Desea continuar? (SI/NO): ");
-                String opcion = teclado.readLine();
+                String opc = teclado.readLine();
 
-                if (opcion.equalsIgnoreCase("NO")) {
+                if (opc.equalsIgnoreCase("NO")) {
                     salida.println("NO");
                     System.out.println("Conexión finalizada");
                     break;

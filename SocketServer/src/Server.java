@@ -11,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+/**
+ * Clase de la maquina Socket Servidor
+ */
 public class Server {
 
     private static final String HOST = "localhost";
@@ -19,6 +22,10 @@ public class Server {
     private static final String DATABASE = "sistema_personas";
     private static final String TIMEZONE = "?serverTimezone=America/Bogota";
 
+    /**
+     * Metodo principal de la clase Server
+     * @param args
+     */
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
@@ -29,6 +36,7 @@ public class Server {
         System.out.print("Ingrese contraseña DB: ");
         String password = sc.nextLine();
 
+        // Control de errores y generación del Socket
         try (ServerSocket serverSocket = new ServerSocket(5000)) {
             System.out.println("Servidor iniciado en el puerto: " + PORT_SOCKET_SERVER);
             System.out.println("Escuchando...");
@@ -48,7 +56,9 @@ public class Server {
         }
     }
 
-    // Clase que maneja cada cliente
+    /**
+     * Clase que maneja cada cliente bajo un hilo único de procesamiento
+     */
     static class ClientHandler implements Runnable {
 
         private Socket socket;
@@ -56,42 +66,53 @@ public class Server {
         private String user;
         private String password;
 
-        public ClientHandler(Socket socket, int count,  String user, String password) {
+        // Constructor de la clase
+        public ClientHandler(Socket socket, int count, String user, String password) {
             this.socket = socket;
             this.count = count;
             this.user = user;
             this.password = password;
         }
 
+        /**
+         * Se sobre escribe el metodo para incluir la logica del procesamiento
+         */
         @Override
         public void run() {
 
             try (
                     BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter salida = new PrintWriter(socket.getOutputStream(), true)) {
+
                 String mensaje;
 
                 while ((mensaje = entrada.readLine()) != null) {
 
                     if (mensaje.equalsIgnoreCase("NO")) {
-                        System.out.println("¡Cliente "+count+" desconectado!");
+                        System.out.println("¡Cliente " + count + " desconectado!");
                         break;
                     }
 
-                    System.out.println("Mensaje del cliente "+count+": " + mensaje);
+                    System.out.println("Mensaje del cliente " + count + ": " + mensaje);
 
                     String respuesta = consultarPersona(mensaje, user, password);
                     salida.println(respuesta);
                 }
 
             } catch (Exception e) {
-                System.out.println("Error con cliente"+count+": " + e.getMessage());
+                System.out.println("Error con cliente" + count + ": " + e.getMessage());
             }
         }
     }
 
-    // Método de consulta a la DB
-    public static String consultarPersona(String telefono, String user, String password) {
+    /**
+     * Método de consulta a la DB
+     * @param numberPhone
+     * @param user
+     * @param password
+     * @return
+     */
+    public static String consultarPersona(String numberPhone, String user, String password) {
 
         String jdbc = "jdbc:mysql://" + HOST + ":" + PORT_DB + "/" + DATABASE + TIMEZONE;
 
@@ -102,7 +123,7 @@ public class Server {
                 Connection conn = DriverManager.getConnection(jdbc, user, password);
                 PreparedStatement ps = conn.prepareStatement(query)) {
 
-            ps.setString(1, telefono);
+            ps.setString(1, numberPhone);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -117,6 +138,7 @@ public class Server {
             }
 
         } catch (SQLException e) {
+            System.out.println("Error en la consulta: " + e.getMessage());
             return "Error en la consulta: " + e.getMessage();
         }
     }
