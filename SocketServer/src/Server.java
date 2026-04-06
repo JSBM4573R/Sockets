@@ -18,9 +18,9 @@ public class Server {
 
     private static final String HOST = "localhost";
     private static final String PORT_DB = "3306";
-    private static final String PORT_SOCKET_SERVER = "3306";
     private static final String DATABASE = "sistema_personas";
     private static final String TIMEZONE = "?serverTimezone=America/Bogota";
+    private static final int PORT_SOCKET_SERVER = 5000;
 
     /**
      * Metodo principal de la clase Server
@@ -37,7 +37,7 @@ public class Server {
         String password = sc.nextLine();
 
         // Control de errores y generación del Socket
-        try (ServerSocket serverSocket = new ServerSocket(5000)) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT_SOCKET_SERVER)) {
             System.out.println("Servidor iniciado en el puerto: " + PORT_SOCKET_SERVER);
             System.out.println("Escuchando...");
 
